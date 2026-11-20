@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ремонт шин</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  /* Фирменные цвета РЕМЭКА (как на remeca24.ru): зелёный #00B956, чёрный, белый */
+  :root { --bg: #f7f7f7; --card: #fff; --ink: #222; --muted: #6b6b6b; --line: #e3e3e3; --acc: #00B956; --acc2: #00B956;
+    --acct: #00873f; --black: #111; --ok: #00B956; --no: #c62828; --warn: #b26a00; --off: #555; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  header { position: sticky; top: 0; z-index: 5; background: var(--black); color: #fff; border-bottom: 3px solid var(--acc); padding: 8px 12px calc(6px) ; padding-top: max(8px, env(safe-area-inset-top)); }
+  header h1 { margin: 0; font-size: 17px; }
+  .bar { font-size: 13px; margin-top: 2px; opacity: .95; cursor: pointer; }
+  .bar.off::before { content: "● "; color: #ffb3b3; }
+  .bar.wait::before { content: "● "; color: #ffe08a; }
+  .bar.ok::before { content: "● "; color: #9df0b3; }
+  .bar.err { background: #fff; color: var(--no); padding: 4px 8px; border-radius: 6px; }
+  #notice { background: #fff4d6; color: #6b4a00; padding: 10px 12px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f0d890; }
+  main { padding: 12px 12px 80px; max-width: 720px; margin: 0 auto; }
+  h2 { font-size: 19px; margin: 6px 0; }
+  header h1 span { color: var(--acc); }
+  h3 { font-size: 15px; margin: 18px 0 6px; color: var(--black); text-transform: uppercase; letter-spacing: .02em; }
+  .cnt { background: var(--acc); color: #fff; border-radius: 10px; padding: 0 7px; font-size: 12px; vertical-align: 2px; }
+  .who { font-weight: 600; margin-bottom: 8px; } .who small { color: var(--muted); font-weight: 400; }
+  .tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 10px; }
+  .tabs button { flex: 0 0 auto; border: 1px solid var(--line); background: var(--card); padding: 9px 14px; border-radius: 20px; font-size: 15px; color: var(--ink); }
+  .tabs button.on { background: var(--black); color: #fff; border-color: var(--black); }
+  .btn { display: inline-block; border: 0; background: var(--acc2); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; }
+  .btn.big { display: block; width: 100%; padding: 14px; font-size: 17px; margin: 10px 0; }
+  .btn.ok { background: var(--ok); } .btn.no { background: var(--no); }
+  .link { border: 0; background: none; color: var(--acct); text-decoration: underline; font-size: 14px; padding: 0; }
+  .row { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 6px 0; cursor: pointer; }
+  .row .cl { color: var(--muted); }
+  .r2 { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .st { font-weight: 600; color: var(--ink); }
+  .st0 { color: #b26a00; } .st1, .st2 { color: #9a2f6b; } .st3, .st4, .st5 { color: #1f4f8a; } .st6 { color: #8a6a00; } .st7 { color: var(--acct); } .st8, .st9 { color: var(--muted); }
+  .stbig { font-size: 18px; }
+  .warn { color: var(--warn); font-weight: 600; } .pend { color: #8a6a00; } .bad { color: var(--no); }
+  .muted { color: var(--muted); font-size: 14px; } .small { font-size: 12px; margin-top: 8px; }
+  .hint { color: var(--muted); font-size: 13px; margin: 2px 0 6px; }
+  .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin: 10px 0; }
+  .card.sel { border-color: var(--acc2); }
+  dl { display: grid; grid-template-columns: 120px 1fr; gap: 4px 10px; margin: 10px 0; font-size: 15px; }
+  dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+  .top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .top h2 { flex: 1; }
+  .back { border: 0; background: none; font-size: 17px; color: var(--acct); padding: 6px 4px; cursor: pointer; }
+  label { display: block; margin: 10px 0; font-size: 14px; color: var(--muted); }
+  input, select, textarea { display: block; width: 100%; margin-top: 4px; padding: 11px; font-size: 16px; border: 1px solid #cfc8bf; border-radius: 8px; background: #fff; color: var(--ink); font-family: inherit; }
+  input[readonly] { background: #f0ece7; }
+  label.chk { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 16px; }
+  label.chk input { width: 22px; height: 22px; margin: 0; flex: 0 0 auto; }
+  .lbl { font-size: 13px; color: var(--muted); margin: 12px 0 4px; text-transform: uppercase; letter-spacing: .03em; }
+  .seg { display: flex; gap: 8px; } .seg label { flex: 1; display: flex; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px; color: var(--ink); font-size: 16px; margin: 6px 0; }
+  .seg input { width: 20px; height: 20px; margin: 0; }
+  .pw { display: flex; justify-content: space-between; gap: 10px; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 11px; margin: 5px 0; font-size: 15px; color: var(--ink); cursor: pointer; }
+  .pw b { white-space: nowrap; color: var(--acct); }
+  details.pick, details.more { margin: 10px 0; } details summary { cursor: pointer; padding: 10px 0; color: var(--acct); font-weight: 600; }
+  .wrow { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 6px 0; }
+  .wn small { display: block; color: var(--muted); }
+  .wq { display: flex; gap: 8px; align-items: flex-end; } .wq label { margin: 4px 0; flex: 1; } .wq label:first-child { flex: 0 0 70px; }
+  .x { border: 0; background: #eee; color: #333; border-radius: 8px; width: 40px; height: 44px; font-size: 16px; cursor: pointer; }
+  .sum { text-align: right; font-size: 17px; margin: 8px 0; }
+  table.wt { width: 100%; border-collapse: collapse; font-size: 14px; } .wt td { padding: 5px 0; border-bottom: 1px solid var(--line); } .wt td:last-child { text-align: right; white-space: nowrap; padding-left: 8px; }
+  .wt .tot td { font-weight: 700; border: 0; }
+  .ph { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ph img { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; background: #ddd; display: block; }
+  .ph span, .ph a { position: relative; display: block; }
+  .ph .x { position: absolute; top: 2px; right: 2px; width: 28px; height: 28px; padding: 0; background: rgba(0,0,0,.6); color: #fff; }
+  .ph i { position: absolute; bottom: 2px; right: 4px; font-style: normal; }
+  .pbtns { display: flex; gap: 8px; margin-top: 6px; } .pbtns .btn { flex: 1; }
+  ul.hist { list-style: none; padding: 0; margin: 0; font-size: 14px; } ul.hist li { padding: 5px 0; border-bottom: 1px solid var(--line); } ul.hist span { color: var(--muted); }
+  .cm { display: flex; gap: 8px; margin-top: 10px; } .cm input { margin: 0; }
+  .flt { display: grid; gap: 6px; } .flt input, .flt select { margin: 0; } .flt label { margin: 2px 0; }
+  .person { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 6px 0; }
+  .person.off { opacity: .6; }
+  .pbtn { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; } .pbtn button { border: 1px solid var(--line); background: #faf8f5; padding: 8px 10px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 16px; border-radius: 20px; font-size: 15px; z-index: 10; max-width: 90%; }
+</style>
+</head>
+<body>
+<header><h1>Ремонт шин · <span>РЕМЭКА</span></h1><div id="bar" class="bar">Загрузка…</div></header>
+<div id="notice" hidden></div>
+<main id="main"></main>
+<div id="toast" hidden></div>
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
