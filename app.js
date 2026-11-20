@@ -190,7 +190,10 @@
     const top = stack[stack.length - 1];
     if (top.v === 'form') return;
     if (!cfg.t) {
-      m.innerHTML = '<div class="empty"><h2>Учёт ремонта шин</h2><p>Откройте на этом телефоне <b>свою личную ссылку</b> — её даёт администратор.</p></div>';
+      // На iPhone значок на экране «Домой» не видит то, что было открыто в Safari, — ссылку вставляют сюда.
+      m.innerHTML = '<div class="empty"><h2>Учёт ремонта шин</h2><p>Вставьте сюда <b>свою личную ссылку</b> — её даёт администратор.</p>' +
+        '<textarea id="lnk" rows="4" placeholder="https://airus010100-rem.github.io/remont-shin/#api=…"></textarea>' +
+        '<button class="btn big" data-link>Войти</button></div>';
       return;
     }
     if (!st) {
@@ -766,8 +769,17 @@
 
   // ---------- нажатия ----------
   document.addEventListener('click', e => {
-    const t = e.target.closest('[data-uid],[data-tab],[data-accept],[data-act],[data-back],[data-sync],[data-cmt],#notice,#bar');
+    const t = e.target.closest('[data-uid],[data-tab],[data-accept],[data-act],[data-back],[data-sync],[data-cmt],[data-link],#notice,#bar');
     if (!t) return;
+    if (t.dataset.link != null) {
+      const s = $('lnk').value.trim();
+      const h = new URLSearchParams((s.split('#')[1] || ''));
+      if (!h.get('api') || !h.get('t')) return alert('Это не похоже на личную ссылку. Скопируйте её целиком из сообщения.');
+      cfg = { api: h.get('api'), t: h.get('t') };
+      try { localStorage.setItem('remont-cfg', JSON.stringify(cfg)); } catch (er) {}
+      snap = null; rebuild(); render(); sync();
+      return;
+    }
     if (t.id === 'notice') return rejectsView();
     if (t.id === 'bar') return sync();
     if (t.dataset.back != null) return back();

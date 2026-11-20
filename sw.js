@@ -1,6 +1,6 @@
 // Хранит файлы приложения в телефоне, чтобы оно открывалось без интернета.
 // После правки файлов на GitHub поменяйте номер версии ниже (remont-v2, remont-v3 …).
-const C = 'remont-v1';
+const C = 'remont-v2';
 const FILES = ['./', './index.html', './app.js', './logic.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './spravochnik.json'];
 
 self.addEventListener('install', e => {
