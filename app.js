@@ -296,7 +296,7 @@
     list.sort((a, b) => (a.since || 0) - (b.since || 0));
     return '<div class="flt">' +
       '<input id="fq" placeholder="Поиск: Р-номер, размер, клиент" value="' + esc(flt.q) + '">' +
-      '<select id="fst"><option value="">Все статусы</option>' + STATUSES.map(s => '<option' + (flt.st === s ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select>' +
+      '<select id="fst"><option value="">Все статусы</option>' + STATUSES.map(s => '<option value="' + esc(s) + '"' + (flt.st === s ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select>' +
       '<select id="fmgr"><option value="">Все менеджеры</option><option value="-"' + (flt.mgr === '-' ? ' selected' : '') + '>Без менеджера</option>' +
       mgrs.map(x => '<option value="' + esc(x.id) + '"' + (flt.mgr === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('') + '</select>' +
       '<label class="chk"><input type="checkbox" id="fcl"' + (flt.closed ? ' checked' : '') + '> показать закрытые</label></div>' +
@@ -419,13 +419,13 @@
       '<dt>Группа прайса</dt><dd>' + esc(c.group || '—') + '</dd>' +
       (c.disk ? '<dt>На диске</dt><dd>да</dd>' : '') +
       (c.approx ? '<dt>Примерная цена</dt><dd>' + esc(c.approx) + '</dd>' : '') +
-      (c.note ? '<dt>Заметка</dt><dd>' + esc(c.note) + '</dd>' : '') +
+      (c.note ? '<dt>Заметка</dt><dd class="notr">' + esc(c.note) + '</dd>' : '') +
       '<dt>К оплате</dt><dd><b>' + rub(L.toPay(c)) + '</b> · ' + esc(c.pay) + (c.method ? ' (' + esc(c.method) + ')' : '') + '</dd>' +
       (c.outcome ? '<dt>Итог</dt><dd>' + esc(c.outcome) + '</dd>' : '') +
       '</dl>' + worksTable(c) + photoStrip(c, 'до') + photoStrip(c, 'после') + '</div>';
     if (acts.length) h += '<div class="acts">' + acts.map(t => '<button class="btn big" data-act="' + t + '">' + ACT_LABEL[t] + '</button>').join('') + '</div>';
     else if (!L.isFinal(c)) h += '<div class="hint">Сейчас шаг за другим человеком.</div>';
-    h += '<div class="card"><div class="lbl">История</div><ul class="hist">' + (c.hist || []).slice().reverse().map(x =>
+    h += '<div class="card"><div class="lbl">История</div><ul class="hist notr">' + (c.hist || []).slice().reverse().map(x =>
       '<li><span>' + dt(x.t) + '</span> <b>' + esc(x.by) + '</b>: ' + esc(x.what) + '</li>').join('') + '</ul>' +
       '<div class="cm"><input id="cmt" placeholder="Комментарий"><button class="btn" data-cmt>Добавить</button></div>' +
       '<div class="muted small">Принял: ' + esc(pp.accepted || '—') + ' · Осмотр: ' + esc(pp.inspected || '—') + ' · Ремонт: ' + esc(pp.repaired || '—') +
@@ -584,7 +584,7 @@
         '<div id="cnewbox" hidden class="card"><label>Название / имя<input id="cn"></label><label>Телефон<input id="cp" type="tel"></label>' +
         '<label>Менеджер клиента<select id="cm"><option value="">— выберите —</option>' + mgrs.map(x => '<option value="' + esc(x.id) + '"' + (x.id === p.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('') + '</select></label></div>' +
         '<label>Размер<input id="sz" list="dlsz" placeholder="например 315/80R22.5" autocomplete="off"></label>' + dl('dlsz', SPR.size) +
-        '<label>Группа прайса<select id="gr"><option value="">— выберите —</option>' + P.groups.map(g => '<option>' + esc(g) + '</option>').join('') + '</select></label>' +
+        '<label>Группа прайса<select id="gr"><option value="">— выберите —</option>' + P.groups.map(g => '<option value="' + esc(g) + '">' + esc(g) + '</option>').join('') + '</select></label>' +
         '<label>Шина: бренд, модель<input id="tr" list="dlbr" autocomplete="off"></label>' + dl('dlbr', SPR.brand) +
         '<label>Серийный номер (если есть)<input id="sn"></label>' +
         '<label class="chk"><input type="checkbox" id="dk"> На диске</label>' +

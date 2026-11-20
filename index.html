@@ -26,6 +26,9 @@
   main { padding: 12px 12px 80px; max-width: 720px; margin: 0 auto; }
   h2 { font-size: 19px; margin: 6px 0; }
   header h1 span { color: var(--acc); }
+  #lang { float: right; display: flex; border: 1px solid #555; background: transparent; border-radius: 8px; padding: 0; overflow: hidden; cursor: pointer; }
+  #lang span { padding: 4px 9px; font-size: 13px; font-weight: 700; color: #aaa; }
+  #lang span.on { background: var(--acc); color: #fff; }
   h3 { font-size: 15px; margin: 18px 0 6px; color: var(--black); text-transform: uppercase; letter-spacing: .02em; }
   .cnt { background: var(--acc); color: #fff; border-radius: 10px; padding: 0 7px; font-size: 12px; vertical-align: 2px; }
   .who { font-weight: 600; margin-bottom: 8px; } .who small { color: var(--muted); font-weight: 400; }
@@ -87,10 +90,11 @@
 </style>
 </head>
 <body>
-<header><h1>Ремонт шин · <span>РЕМЭКА</span></h1><div id="bar" class="bar">Загрузка…</div></header>
+<header><button id="lang" type="button"><span>РУ</span><span>ТҶ</span></button><h1>Ремонт шин · <span>РЕМЭКА</span></h1><div id="bar" class="bar">Загрузка…</div></header>
 <div id="notice" hidden></div>
 <main id="main"></main>
 <div id="toast" hidden></div>
+<script src="i18n.js"></script>
 <script src="logic.js"></script>
 <script src="app.js"></script>
 </body>
